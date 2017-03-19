@@ -1,11 +1,9 @@
 onedrive-d
 ==========
 
+# Keep an eye on https://github.com/xybu/onedrived-dev.
+
 A Microsoft OneDrive desktop client / daemon on Linux, written in Python 3.
-
-## Note for this branch
-
-This branch experiments with daemonization of onedrive-d process.
 
 ## Install
 
@@ -26,18 +24,21 @@ rm -rfv ~/.onedrive
 (2) Grab the source code
 
 ```bash
-git clone https://github.com/xybu/onedrive-d.git
+git clone https://github.com/xybu/onedrive-d-old.git
 cd onedrive-d
 ```
 
-Or you can browse https://github.com/xybu/onedrive-d and download the ZIP file manually.
+Or you can browse https://github.com/xybu/onedrive-d-old and download the ZIP file manually.
 
 (3) Pre-requisites
 
-Your local filesystem must store UTC timestamps, not local time. This is true
-for most Unix filesystems.
+Your local filesystem must store UTC timestamps, not local time. This is true for most Unix filesystems.
 
 onedrive-d requires Python3 intepreter. If Python version is older than 3.4, `python3-pip` is also required.
+
+Python3 intepreter must use Unicode mode (default for most Linux distro) otherwise its string datatype won't work.
+
+The daemon package (`daemonocle`) has a Python dependency `psutil`, which requires system package `python3-dev` installed. If installation fails because of missing `<Python.h>`, check if `python3-dev` package is installed. Not all Linux distro ship this package by default. Pay extra attention to this if your desktop environment is MATE (i.e., if your distribute is Linux Mint or Ubuntu MATE, etc.).
 
 For GUI component to work, Python3 binding of GObject (`python3-gi` package for Debian/Ubuntu, `pygobject3` for Fedora, `python-gobject` for Arch, and `python3-gobject` for OpenSUSE) is needed. [Refer to this article if you want to build PyGObject from source.](https://python-gtk-3-tutorial.readthedocs.org/en/latest/install.html)
 
@@ -47,10 +48,10 @@ Another recommended package is `inotify-tools` (for most package managers), whic
 
 ```bash
 # Register package
-sudo python3 ./onedrive_d/setup.py install
+sudo python3 setup.py install
 
 # Clean temporary files
-sudo python3 ./onedrive_d/setup.py clean
+sudo python3 setup.py clean
 
 # Create settings dir
 mkdir ~/.onedrive
@@ -115,6 +116,8 @@ Note that the commands above are no longer valid after installing the package to
 Refer to step 1 of section "Installation".
 
 ## Notes for Users
+
+Note that this is the older version.  the current version is still in development.  If you are having problems with python make sure you have the correct version and that you have installed the correct modules (i.e. apt-get install python3-dev).
 
 ### Data Integrity
 

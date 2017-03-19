@@ -93,7 +93,6 @@ class OneDriveAPI:
 	ROOT_ENTRY_ID = 'me/skydrive'
 
 	logger = od_glob.get_logger()
-	config = od_glob.get_config_instance()
 	threadman = od_thread_manager.get_instance()
 
 	def __init__(self, client_id, client_secret, client_scope=CLIENT_SCOPE, redirect_uri=REDIRECT_URI):
@@ -123,7 +122,7 @@ class OneDriveAPI:
 		if self.client_refresh_token is None:
 			raise OneDriveAuthError()
 		refreshed_token_set = self.refresh_token(self.client_refresh_token)
-		self.config.set_access_token(refreshed_token_set)
+		od_glob.get_config_instance().set_access_token(refreshed_token_set)
 		self.logger.info('auto refreshed API token in face of auth error.')
 
 	def get_auth_uri(self, display='touch', locale='en', state=''):
@@ -183,7 +182,7 @@ class OneDriveAPI:
 
 		try:
 			request = requests.post(
-				OneDriveAPI.OAUTH_TOKEN_URI, data=params, verify=True)
+				OneDriveAPI.OAUTH_TOKEN_URI, data=params, verify=False)
 			response = self.parse_response(request, OneDriveAPIException)
 			self.set_access_token(response['access_token'])
 			self.set_refresh_token(response['refresh_token'])
@@ -429,8 +428,6 @@ class OneDriveAPI:
 						self.logger.debug("failed BITS Create-Session request to upload \"%s\". HTTP %d.", local_path, response.status_code)
 						self.logger.debug(response.headers)
 						response.close()
-						fcntl.lockf(source_file, fcntl.LOCK_UN)
-						source_file.close()
 						return None
 				session_id = response.headers['bits-session-id']
 				response.close()
@@ -482,7 +479,7 @@ class OneDriveAPI:
 		source_file.close()
 
 		# refresh token if expired
-		if self.config.is_token_expired():
+		if od_glob.get_config_instance().is_token_expired():
 			try:
 				self.auto_recover_auth_error()
 			except Exception as e:
